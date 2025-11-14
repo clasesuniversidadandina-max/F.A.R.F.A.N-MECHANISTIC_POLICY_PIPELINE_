@@ -201,7 +201,7 @@ class CalibrationOrchestrator:
             }
         )
 
-        # Layer 1: Base (@b) - ALWAYS REQUIRED
+        # Layer 1: BASE (@b) - ALWAYS REQUIRED
         # Load intrinsic calibration score from JSON
         base_score = self.intrinsic_loader.get_score(method_id, default=0.5)
         is_calibrated = self.intrinsic_loader.is_calibrated(method_id)
