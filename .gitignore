@@ -16,17 +16,20 @@ parts/
 sdist/
 var/
 wheels/
+pip-wheel-metadata/
+share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
 MANIFEST
 
-# Testing
-.pytest_cache/
-.coverage
-htmlcov/
+# Virtual environments
+venv/
+env/
+ENV/
+.venv
 
-# IDEs
+# IDE
 .vscode/
 .idea/
 *.swp
@@ -36,3 +39,19 @@ htmlcov/
 # OS
 .DS_Store
 Thumbs.db
+
+# Logs
+*.log
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# MyPy
+.mypy_cache/
+.dmypy.json
+dmypy.json
