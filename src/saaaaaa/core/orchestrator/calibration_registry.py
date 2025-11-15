@@ -13,6 +13,7 @@ Design Principles:
 
 from __future__ import annotations
 
+import hashlib
 import json
 import logging
 from dataclasses import dataclass
@@ -20,6 +21,31 @@ from pathlib import Path
 from typing import Any, Dict, Optional
 
 logger = logging.getLogger(__name__)
+
+
+# ============================================================================
+# Exceptions
+# ============================================================================
+
+class MissingCalibrationError(Exception):
+    """Raised when a required calibration is missing from the registry."""
+
+    def __init__(self, method_key: str):
+        """
+        Initialize missing calibration error.
+
+        Parameters
+        ----------
+        method_key : str
+            The method key that was missing (e.g., "ClassName.method_name")
+        """
+        super().__init__(f"No calibration found for method: {method_key}")
+        self.method_key = method_key
+
+
+# ============================================================================
+# Module Configuration
+# ============================================================================
 
 # Canonical repository root
 # Path hierarchy: calibration_registry.py -> orchestrator -> core -> saaaaaa -> src -> REPO_ROOT
@@ -225,8 +251,113 @@ def resolve_calibration_with_context(
         return base_calibration
 
 
+# ============================================================================
+# Public API - Calibration Registry Access
+# ============================================================================
+
+def get_calibration_hash() -> str:
+    """
+    Get deterministic SHA256 hash of all calibration data.
+
+    This hash can be used for versioning and change detection.
+    The hash is computed from the sorted JSON representation of
+    all calibration data to ensure determinism.
+
+    Returns
+    -------
+    str
+        64-character hexadecimal SHA256 hash of calibration data
+    """
+    data = _load_calibration_data()
+
+    # Sort keys to ensure determinism
+    canonical_json = json.dumps(data, sort_keys=True, separators=(',', ':'))
+
+    # Compute SHA256 hash
+    hash_obj = hashlib.sha256(canonical_json.encode('utf-8'))
+    return hash_obj.hexdigest()
+
+
+def _build_calibrations_dict() -> Dict[str, MethodCalibration]:
+    """
+    Build CALIBRATIONS dictionary from calibration data.
+
+    Returns
+    -------
+    Dict[str, MethodCalibration]
+        Mapping of method keys to MethodCalibration objects
+    """
+    data = _load_calibration_data()
+    calibrations = {}
+
+    for method_key, method_data in data.items():
+        # Skip metadata keys
+        if method_key.startswith('_'):
+            continue
+
+        try:
+            calibrations[method_key] = MethodCalibration(**method_data)
+        except Exception as e:
+            logger.warning(f"Invalid calibration for {method_key}: {e}")
+
+    return calibrations
+
+
+# Global calibration registry - lazy loaded
+_calibrations_instance: Optional[Dict[str, MethodCalibration]] = None
+
+
+def _get_calibrations() -> Dict[str, MethodCalibration]:
+    """Get or build calibrations dictionary."""
+    global _calibrations_instance
+    if _calibrations_instance is None:
+        _calibrations_instance = _build_calibrations_dict()
+    return _calibrations_instance
+
+
+# Public readonly property-like access
+class _CalibrationsProxy:
+    """Proxy for readonly access to calibrations."""
+
+    def __getitem__(self, key: str) -> MethodCalibration:
+        return _get_calibrations()[key]
+
+    def __contains__(self, key: str) -> bool:
+        return key in _get_calibrations()
+
+    def __len__(self) -> int:
+        return len(_get_calibrations())
+
+    def __iter__(self):
+        return iter(_get_calibrations())
+
+    def keys(self):
+        return _get_calibrations().keys()
+
+    def values(self):
+        return _get_calibrations().values()
+
+    def items(self):
+        return _get_calibrations().items()
+
+    def get(self, key: str, default=None):
+        return _get_calibrations().get(key, default)
+
+
+# Public CALIBRATIONS dict
+CALIBRATIONS = _CalibrationsProxy()
+
+# Calibration version from data or hash
+_calibration_data = _load_calibration_data()
+CALIBRATION_VERSION = _calibration_data.get('_version', get_calibration_hash()[:16])
+
+
 __all__ = [
     "MethodCalibration",
+    "MissingCalibrationError",
     "resolve_calibration",
     "resolve_calibration_with_context",
+    "get_calibration_hash",
+    "CALIBRATIONS",
+    "CALIBRATION_VERSION",
 ]
