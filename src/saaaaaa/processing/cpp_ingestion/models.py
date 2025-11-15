@@ -21,6 +21,14 @@ class ChunkResolution(Enum):
     MACRO = "MACRO"  # Coarse chunks (chapters, themes)
 
 
+class EdgeType(Enum):
+    """Types of relationships between chunks in the graph."""
+    PRECEDES = "PRECEDES"      # Sequential relationship
+    CONTAINS = "CONTAINS"      # Hierarchical containment
+    REFERENCES = "REFERENCES"  # Cross-reference
+    SUPERSEDES = "SUPERSEDES"  # Version/amendment relationship
+
+
 @dataclass
 class TextSpan:
     """Represents a span of text in the original document."""

@@ -76,7 +76,7 @@ warnings.warn(
     stacklevel=2
 )
 from collections.abc import Mapping, MutableMapping, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 from types import MappingProxyType
@@ -220,7 +220,7 @@ class RawDocument:
     num_pages: int
     file_size_bytes: int
     file_hash: str
-    metadata: Mapping[str, Any] = _EMPTY_MAPPING
+    metadata: Mapping[str, Any] = field(default_factory=lambda: _EMPTY_MAPPING)
     is_valid: bool = True
 
 # ============================================================================
@@ -808,6 +808,15 @@ def ingest_document(*, pdf_path: str) -> PreprocessedDocument:
     preprocessed_doc = engine.preprocess_document(raw_doc)
 
     return preprocessed_doc
+
+# ============================================================================
+# BACKWARD COMPATIBILITY ALIASES
+# ============================================================================
+# Import from schemas for backward compatibility
+from schemas.preprocessed_document import (
+    DocumentIndexesV1 as DocumentIndexes,
+    StructuredText,
+)
 
 # ============================================================================
 # EJEMPLO DE USO

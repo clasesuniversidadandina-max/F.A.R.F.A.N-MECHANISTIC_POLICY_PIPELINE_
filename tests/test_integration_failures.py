@@ -57,7 +57,10 @@ class _DummyRandom:
     def normal(self, loc, scale, size):
         return [loc for _ in range(size)]
 
-stub_numpy.random = types.SimpleNamespace(default_rng=lambda: _DummyRandom())
+stub_numpy.random = types.SimpleNamespace(
+    default_rng=lambda: _DummyRandom(),
+    Generator=_DummyRandom  # For type annotations
+)
 
 sys.modules.setdefault("numpy", stub_numpy)
 
@@ -152,15 +155,8 @@ sys.modules.setdefault("scipy.stats", stub_scipy_stats)
 sys.modules.setdefault("scipy.optimize", stub_scipy_optimize)
 sys.modules.setdefault("scipy.special", stub_scipy_special)
 
-_orchestrator_path = Path(__file__).parent.parent / "orchestrator.py"
-_orchestrator_spec = importlib.util.spec_from_file_location("_orchestrator_module", _orchestrator_path)
-if _orchestrator_spec and _orchestrator_spec.loader:
-    _orchestrator_module = importlib.util.module_from_spec(_orchestrator_spec)
-    _orchestrator_module.datetime = datetime
-    _orchestrator_spec.loader.exec_module(_orchestrator_module)
-    D1Q1_Executor = _orchestrator_module.D1Q1_Executor
-else:  # pragma: no cover - safety fallback
-    raise RuntimeError("Unable to load orchestrator module")
+# Import D1Q1_Executor from its new location after reorganization
+from saaaaaa.core.orchestrator.executors import D1Q1_Executor
 
 from saaaaaa.core.aggregation import DimensionAggregator
 from saaaaaa.processing.document_ingestion import (

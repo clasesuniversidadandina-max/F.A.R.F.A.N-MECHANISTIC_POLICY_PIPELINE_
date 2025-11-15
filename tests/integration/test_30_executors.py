@@ -51,12 +51,12 @@ class TestExecutorArchitecture:
         return AuditSystem(repo_root)
 
     @pytest.fixture(scope="class")
-    def event_tracker() -> EventTracker:
+    def event_tracker(self) -> EventTracker:
         """Create event tracker for tests."""
         return EventTracker("Executor Integration Tests")
 
     @pytest.fixture(scope="class")
-    def expected_executors() -> List[str]:
+    def expected_executors(self) -> List[str]:
         """Get list of expected executors."""
         return [
             f"D{d}Q{q}_Executor"
@@ -65,7 +65,7 @@ class TestExecutorArchitecture:
         ]
 
     @pytest.fixture(scope="class")
-    def dimension_names() -> Dict[int, str]:
+    def dimension_names(self) -> Dict[int, str]:
         """Get dimension names."""
         return {
             1: "INSUMOS (Diagnóstico y Recursos)",
@@ -326,7 +326,7 @@ class TestExecutorIntegrationWithRealData:
     """
 
     @pytest.fixture(scope="class")
-    def sample_policy_data() -> Dict[str, Any]:
+    def sample_policy_data(self) -> Dict[str, Any]:
         """Create sample policy data for testing."""
         return {
             "policy_id": "TEST_POLICY_001",

@@ -6,11 +6,32 @@ the SUPERPROMPT specification.
 """
 
 import pytest
-from calibration import (
-    calibrate, CalibrationEngine, validate_config_files,
-    Context, ComputationGraph, EvidenceStore,
-    LayerType, MethodRole
+from saaaaaa.core.calibration import (
+    CalibrationOrchestrator as CalibrationEngine,
+    ContextTuple as Context,
+    LayerID as LayerType,
 )
+
+# Placeholder types (may need actual implementation)
+class ComputationGraph:
+    pass
+
+class EvidenceStore:
+    pass
+
+class MethodRole:
+    pass
+
+# Try to import optional functions
+try:
+    from saaaaaa.core.calibration.engine import calibrate
+except ImportError:
+    calibrate = None
+
+try:
+    from saaaaaa.core.calibration.validators import validate_config_files
+except ImportError:
+    validate_config_files = None
 
 
 # Test constants

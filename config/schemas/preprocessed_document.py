@@ -156,3 +156,8 @@ def downgrade_preprocessed_document(doc: PreprocessedDocumentV2) -> Preprocessed
         indexes=doc.indexes,
         metadata=MappingProxyType(dict(legacy_metadata)),
     )
+
+
+# Backward compatibility aliases
+StructuredText = StructuredTextV1
+DocumentIndexes = DocumentIndexesV1

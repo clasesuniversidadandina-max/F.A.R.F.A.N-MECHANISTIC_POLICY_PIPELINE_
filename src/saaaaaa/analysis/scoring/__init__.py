@@ -23,13 +23,12 @@ from .scoring import (
     determine_quality_level,
 )
 
-# Import from LEGACY scoring.py using absolute import to avoid circular dependency
+# Import from LEGACY scoring_legacy.py (renamed to avoid namespace shadowing)
 try:
-    import sys
     from importlib import import_module
 
-    # Import the standalone scoring.py file (not the package)
-    legacy_scoring = import_module('saaaaaa.analysis.scoring')
+    # Import the standalone scoring_legacy.py file
+    legacy_scoring = import_module('saaaaaa.analysis.scoring_legacy')
     if hasattr(legacy_scoring, 'MicroQuestionScorer'):
         MicroQuestionScorer = legacy_scoring.MicroQuestionScorer
     else:

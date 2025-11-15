@@ -363,3 +363,7 @@ def validate_monolith_schema(
     """
     validator = MonolithSchemaValidator(schema_path=schema_path)
     return validator.validate_monolith(monolith, strict=strict)
+
+
+# Backward compatibility alias
+SchemaValidator = MonolithSchemaValidator

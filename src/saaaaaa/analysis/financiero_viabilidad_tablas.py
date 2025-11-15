@@ -44,7 +44,10 @@ import pandas as pd
 # === ESTADÍSTICA BAYESIANA Y CAUSAL INFERENCE ===
 import pymc as pm
 import spacy
-import tabula
+try:
+    import tabula
+except ImportError:
+    tabula = None  # type: ignore
 import torch
 from scipy import stats
 
@@ -365,23 +368,26 @@ class PDETMunicipalPlanAnalyzer:
         except Exception as e:
             print(f" ⚠️ Camelot Stream: {str(e)[:50]}")
 
-        # Tabula
-        try:
-            tabula_tables = tabula.read_pdf(
-                pdf_path_str, pages='all', multiple_tables=True,
-                stream=True, guess=True, silent=True
-            )
-            for idx, df in enumerate(tabula_tables):
-                if not df.empty and len(df) > 2:
-                    all_tables.append(ExtractedTable(
-                        df=self._clean_dataframe(df),
-                        page_number=idx + 1,
-                        table_type=None,
-                        extraction_method='tabula',
-                        confidence_score=0.6
-                    ))
-        except Exception as e:
-            print(f" ⚠️ Tabula: {str(e)[:50]}")
+        # Tabula (optional dependency)
+        if tabula is not None:
+            try:
+                tabula_tables = tabula.read_pdf(
+                    pdf_path_str, pages='all', multiple_tables=True,
+                    stream=True, guess=True, silent=True
+                )
+                for idx, df in enumerate(tabula_tables):
+                    if not df.empty and len(df) > 2:
+                        all_tables.append(ExtractedTable(
+                            df=self._clean_dataframe(df),
+                            page_number=idx + 1,
+                            table_type=None,
+                            extraction_method='tabula',
+                            confidence_score=0.6
+                        ))
+            except Exception as e:
+                print(f" ⚠️ Tabula: {str(e)[:50]}")
+        else:
+            print(" ⚠️ Tabula: Not installed (optional dependency)")
 
         unique_tables = self._deduplicate_tables(all_tables)
         print(f"✅ {len(unique_tables)} tablas únicas extraídas\n")
