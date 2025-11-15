@@ -1,0 +1,12 @@
+"""
+DEPRECATED TEST FILE - SKIPPED
+
+This test file tests the deprecated CPP (Canon Policy Package) ingestion system.
+The system has been refactored to SPC (Smart Policy Chunks).
+
+Current tests: tests/test_spc_*.py
+Compatibility layer: src/saaaaaa/processing/cpp_ingestion/ (backward compat only)
+
+This file is preserved for historical reference but tests are skipped.
+To re-enable: Remove pytest.skip() decorator or delete this file entirely.
+"""
