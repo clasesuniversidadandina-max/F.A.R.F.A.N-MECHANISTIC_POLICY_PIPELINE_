@@ -89,6 +89,10 @@ class KPI:
     year: Optional[int] = None
 
 
+# Alias for compatibility
+KPIInfo = KPI
+
+
 @dataclass
 class Entity:
     """Named entity extracted from text."""
