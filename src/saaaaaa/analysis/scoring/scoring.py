@@ -37,6 +37,43 @@ from typing import Any, ClassVar
 
 logger = logging.getLogger(__name__)
 
+
+# ============================================================================
+# Evidence Data Structure
+# ============================================================================
+
+@dataclass
+class Evidence:
+    """
+    Evidence extracted for a question.
+
+    Produced by evaluators in PHASE 2 (evaluation phase).
+    Contains all evidence elements and metadata needed for scoring.
+
+    Attributes
+    ----------
+    elements_found : list[str]
+        List of policy elements that were found in the document
+    confidence_scores : list[float]
+        Confidence scores for each element found (0.0-1.0)
+    semantic_similarity : float | None
+        Overall semantic similarity score for TYPE_F scoring
+    pattern_matches : dict[str, int]
+        Count of pattern matches by pattern type
+    metadata : dict[str, Any]
+        Additional metadata about evidence extraction
+    """
+    elements_found: list[str] = field(default_factory=list)
+    confidence_scores: list[float] = field(default_factory=list)
+    semantic_similarity: float | None = None
+    pattern_matches: dict[str, int] = field(default_factory=dict)
+    metadata: dict[str, Any] = field(default_factory=dict)
+
+
+# ============================================================================
+# Scoring Configuration
+# ============================================================================
+
 class ScoringModality(Enum):
     """Scoring modality types."""
     TYPE_A = "TYPE_A"  # Bayesian: Numerical claims, gaps, risks
