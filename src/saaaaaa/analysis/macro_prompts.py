@@ -20,10 +20,35 @@ import statistics
 from dataclasses import asdict, dataclass, field
 from typing import Any
 
-# Import runtime error fixes for defensive programming
-from runtime_error_fixes import ensure_list_return
-
 logger = logging.getLogger(__name__)
+
+
+# ============================================================================
+# DEFENSIVE PROGRAMMING UTILITIES
+# ============================================================================
+
+def ensure_list_return(value: Any) -> list:
+    """
+    Ensure return value is always a list.
+
+    Defensive utility for functions that should return lists but might
+    return None or other types due to runtime errors.
+
+    Parameters
+    ----------
+    value : Any
+        Value that should be a list
+
+    Returns
+    -------
+    list
+        The value if it's a list, empty list if None, or [value] if single item
+    """
+    if value is None:
+        return []
+    if isinstance(value, list):
+        return value
+    return [value]
 
 # ============================================================================
 # DATA STRUCTURES FOR MACRO PROMPTS
