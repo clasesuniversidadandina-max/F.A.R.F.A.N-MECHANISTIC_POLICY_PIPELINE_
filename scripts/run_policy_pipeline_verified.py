@@ -126,7 +126,6 @@ class VerifiedPipelineRunner:
             self.seed_registry.set_correlation_id(self.execution_id)
         else:
             setattr(self.seed_registry, "correlation_id", self.execution_id)
-        self.seed_registry.set_correlation_id(self.execution_id)
 
         # Initialize verification manifest builder
         self.manifest_builder = VerificationManifestBuilder()
